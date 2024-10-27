@@ -1,6 +1,7 @@
 module "app" {
   source = "../modules/app"
 
+  domain       = "itmo-calendar.tplaymeow.online"
   yc-token     = var.yc-token
   yc-cloud-id  = var.yc-cloud-id
   yc-folder-id = var.yc-folder-id

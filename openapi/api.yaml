@@ -5,7 +5,7 @@ info:
   title: ITMO iCal API
 
 paths:
-  /web/calendar:
+  /:
     get:
       summary: "Get calendar form"
       operationId: getCalendarWebForm
@@ -21,7 +21,7 @@ paths:
         bucket: ${WEB_CALENDAR_BUCKET}
         service_account_id: ${WEB_CALENDAR_SA}
         object: "index.html"
-  /calendar:
+  /api/calendar:
     post:
       summary: "Add new calendar"
       operationId: addNewCalendar
