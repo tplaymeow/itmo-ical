@@ -1,0 +1,94 @@
+openapi: "3.0.0"
+
+info:
+  version: 0.0.1
+  title: ITMO iCal API
+
+paths:
+  /web/calendar:
+    get:
+      summary: "Get calendar form"
+      operationId: getCalendarWebForm
+      responses:
+        '200':
+          description: "HTML page with calendar form"
+          content:
+            text/html:
+              schema:
+                type: "string"
+      x-yc-apigateway-integration:
+        type: object_storage
+        bucket: ${WEB_CALENDAR_BUCKET}
+        service_account_id: ${WEB_CALENDAR_SA}
+        object: "index.html"
+  /calendar:
+    post:
+      summary: "Add new calendar"
+      operationId: addNewCalendar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddCalendarRequest'
+      responses:
+        '200':
+          description: "Success new calendar addition"
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/AddCalendarResponse'
+        '500':
+          description: "Server error"
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: ${ADD_NEW_CALENDAR_FUNCTION_ID}
+        tag: "$latest"
+        service_account_id: ${ADD_NEW_CALENDAR_FUNCTION_SA}
+    get:
+      summary: "Get calendar information"
+      operationId: getCalendar
+      parameters:
+        - name: user_id
+          in: query
+          description: "User identifier"
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "ICS formatted calendar information "
+          content:
+            'text/calendar':
+              schema:
+                type: "string"
+        '500':
+          description: "Server error"
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: ${GET_CALENDAR_FUNCTION_ID}
+        tag: "$latest"
+        service_account_id: ${GET_CALENDAR_FUNCTION_SA}
+
+components:
+  schemas:
+    AddCalendarRequest:
+      type: object
+      properties:
+        login:
+          type: string
+          description: "ITMO user login for calendar access"
+        password:
+          type: string
+          description: "ITMO user password for calendar access"
+      required:
+        - login
+        - password
+    AddCalendarResponse:
+      type: object
+      properties:
+        user_id:
+          type: string
+          description: "Unique identifier of the user"
+      required:
+        - user_id

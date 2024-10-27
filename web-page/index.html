@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Calendar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            width: 300px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .result {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Add Calendar</h2>
+    <form id="calendarForm">
+        <input type="text" id="login" placeholder="Enter your login" required>
+        <input type="password" id="password" placeholder="Enter your password" required>
+        <button type="submit">Get calendar url</button>
+    </form>
+    <div id="result" class="result"></div>
+</div>
+
+<script>
+    document.getElementById("calendarForm").addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const login = document.getElementById("login").value;
+        const password = document.getElementById("password").value;
+
+        try {
+            const response = await fetch("/calendar", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({login, password})
+            });
+
+            if (!response.ok) {
+                throw new Error("Server error: " + response.statusText);
+            }
+
+            const data = await response.json();
+            const calendarUrl = window.location.origin + "/calendar?user_id=" + data.user_id;
+            document.getElementById("result").textContent = "Calendar URL: " + calendarUrl;
+        } catch (error) {
+            document.getElementById("result").textContent = "Unknown error";
+        }
+    });
+</script>
+
+</body>
+</html>
