@@ -76,7 +76,7 @@
             }
 
             const data = await response.json();
-            const calendarUrl = window.location.origin + "/calendar?user_id=" + data.user_id;
+            const calendarUrl = window.location.origin + "/api/calendar?user_id=" + data.user_id;
             document.getElementById("result").textContent = "Calendar URL: " + calendarUrl;
         } catch (error) {
             document.getElementById("result").textContent = "Unknown error";
